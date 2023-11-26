@@ -1,35 +1,48 @@
 package com.mrhopeyone.orange.views.greeting;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.mrhopeyone.orange.views.MainLayout;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
+import jakarta.annotation.PostConstruct;
+
 @PageTitle("Greeting")
 @Route(value = "greeting", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class GreetingView extends HorizontalLayout {
+public class GreetingView extends VerticalLayout {
 
-    private TextField name;
-    private Button sayHello;
 
-    public GreetingView() {
-        name = new TextField("Your name");
-        sayHello = new Button("Say hello");
-        sayHello.addClickListener(e -> {
-            Notification.show("Hello " + name.getValue());
-        });
-        sayHello.addClickShortcut(Key.ENTER);
+	@Value("${app.mainmessage}")
+	String theMessage;
+	@Value("${app.secretpassword}")
+	String thePassword;
+	
+	@Value("${spring.application.name}")
+	private String appName;
+	@Value("${spring.profiles.active: default}")
+	private String activeProfile;
+	
+    private Span name;
+    private Span profiles;
+    private Span messageText;
+    private Span appPassword;
+
+    @PostConstruct
+    public void setupView() {
+    	
+        name = new Span("spring.application.name: " + appName);
+        profiles = new Span("spring.profiles.active: " + activeProfile);
+        messageText = new Span("app.mainmessage: " + theMessage);
+        appPassword = new Span("app.secretpassword: " + thePassword);
 
         setMargin(true);
-        setVerticalComponentAlignment(Alignment.END, name, sayHello);
 
-        add(name, sayHello);
+        add(name, profiles, messageText, appPassword);
     }
 
 }
